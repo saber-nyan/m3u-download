@@ -5,8 +5,8 @@ set -ue
 
 usage() {
     echo "Usage:" >&2
-    name=${i:-'download.sh'}
-    echo "Usage: $name path/to/playlist.m3u path/to/output-directory" >&2
+    name="${i:-'download.sh'}"
+    echo "Usage: ${name} path/to/playlist.m3u path/to/output-directory" >&2
     exit 1
 }
 
@@ -20,24 +20,24 @@ if [ -z "${2+x}" ]; then
     usage
 fi
 
-playlist=$1
-outputdir=${2%/}
+playlist="$1"
+outputdir="${2%/}"
 
-if [ ! -d $outputdir ]; then
-	echo -e "Making folder $outputdir.\n"
-	mkdir -p $outputdir
+if [ ! -d "$outputdir" ]; then
+	echo -e "Making folder ${outputdir}.\n"
+	mkdir -p "$outputdir"
 fi
 
-declare -i lines=$(wc -l < $playlist)
+declare -i lines="$(wc -l < $playlist)"
 declare -i songs=($lines-1)/2
 
-for ((song = 1; song <= $songs; song++)); do
+for ((song = 1; song <= "$songs"; song++)); do
 	songtitle="$(awk "NR==$song*2 {print}" $playlist | cut -d',' -f2-)"
-	songtitle=${songtitle//\//-}
+	songtitle="${songtitle//\//-}"
 	echo -e "$song/$songs\tDownloading $songtitle"
 	
 	songlink="$(awk "NR==$song*2+1 {print}" $playlist)"
-	curl -o "$outputdir/$song $songtitle.mp3" -s $songlink --ignore-content-length
+	curl -o "$outputdir/$song $songtitle.mp3" -s "$songlink" --ignore-content-length
 done
 
 echo -e "\nAll songs downloaded."
